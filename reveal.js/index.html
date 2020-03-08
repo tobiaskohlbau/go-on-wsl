@@ -207,6 +207,80 @@
 					```
 				</textarea>
 			</section>
+			<section data-markdown>
+				<textarea data-template>
+					## Put all together with "proper" error handling and glue code
+					#### Demo
+
+					[github.com/tobiaskohlbau/wsl-ssh-pageant](https://github.com/tobiaskohlbau/wsl-ssh-pageant/tree/backup)\
+					based on\
+					[github.com/benpye/wsl-ssh-pageant](https://github.com/benpye/wsl-ssh-pageant/tree/golang)
+				</textarea>
+			</section>
+			<section data-markdown>
+				<textarea data-template>
+					## Issues
+
+					- Solution needs manual startup
+					- Does not work with WSL2
+					- Unreliable
+				</textarea>
+			</section>
+			<section data-markdown>
+				<textarea data-template>
+					## Unrelibality
+					![Handle errors meme](https://i.ibb.co/7GJCyXy/3rtths.jpg)
+				</textarea>
+			</section>
+			<section data-markdown>
+				<textarea data-template>
+					## Goals for second version
+
+					- Support WSL2
+					- No manual startup
+					- Reliable (more than 1st gen)
+				</textarea>
+			</section>
+			<section data-markdown>
+				<textarea data-template>
+					## General idea
+
+					![Microsoft <3 Linux](https://i.ibb.co/JjJJ62r/microsoft-loves-linux-by-jogibaer-d9lrvp1.jpg)
+
+					- Leverage Windows<>Linux interoperability.
+				</textarea>
+			</section>
+			<section data-markdown>
+				<textarea data-template>
+					# Demo
+				</textarea>
+			</section>
+			<section data-markdown>
+				<textarea data-template>
+					## Solution
+
+					- Native UNIX-Socket via socat
+					- Forward input/output between windows and socat
+				</textarea>
+			</section>
+			<section data-markdown>
+				<textarea data-template>
+					## wsl2-ssh-pageant
+
+					[github.com/BlackReloaded/wsl2-ssh-pageant](https://github.com/BlackReloaded/wsl2-ssh-pageant)
+				</textarea>
+			</section>
+			<section data-markdown>
+				<textarea data-template>
+					# Thanks for your attention
+
+				</textarea>
+			</section>
+			<section data-markdown>
+				<textarea data-template>
+					# Questions & Answers
+				</textarea>
+			</section>
 		</div>
 	</div>
 

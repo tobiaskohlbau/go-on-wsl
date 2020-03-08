@@ -1,0 +1,224 @@
+<!doctype html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+	<title>Go on WSL</title>
+
+	<link rel="stylesheet" href="css/reset.css">
+	<link rel="stylesheet" href="css/reveal.css">
+	<link rel="stylesheet" href="css/theme/black.css">
+
+	<!-- Theme used for syntax highlighting of code -->
+	<link rel="stylesheet" href="lib/css/monokai.css">
+
+	<style>
+		.twitter-tweet {
+			position: absolute !important;
+			left: 200px;
+		}
+
+		ul.no-list li {
+			list-style-type: none;
+		}
+	</style>
+
+	<!-- Printing and PDF exports -->
+	<script>
+		var link = document.createElement('link');
+		link.rel = 'stylesheet';
+		link.type = 'text/css';
+		link.href = window.location.search.match(/print-pdf/gi) ? 'css/print/pdf.css' : 'css/print/paper.css';
+		document.getElementsByTagName('head')[0].appendChild(link);
+	</script>
+</head>
+
+<body>
+	<div class="reveal">
+		<div class="slides">
+			<section>
+				<img src="https://blog.golang.org/lib/godoc/images/go-logo-blue.svg"
+					style="background: none; border: none;margin: 0px 0px;" />
+				<h1 style="display: inline;padding-left: 15px;">on WSL</h1>
+				<h3>Tobias Kohlbau</h2>
+					<ul class="no-list">
+						<li><a href="https://twitter.com/tobiaskohlbau" target="_blank">@tobiaskohlbau</a></li>
+						<li><a href="https://github.com/tobiaskohlbau" target="_blank">github.com/tobiaskohlbau</a></li>
+					</ul>
+			</section>
+			<section>
+				A long time ago in a twitter thread far, far away....
+			</section>
+			<section>
+				<blockquote class="twitter-tweet">
+					<p lang="en" dir="ltr">Since a long time I wanted to use git within WSL/<a
+							href="https://twitter.com/WLinuxApp?ref_src=twsrc%5Etfw">@WLinuxApp</a> but lacked support to sign my
+						commits with GPG and my <a href="https://twitter.com/Yubico?ref_src=twsrc%5Etfw">@Yubico</a> key. Today I
+						took the idea of wsl-ssh-pageant and created a bridge between gpg within WSL and GPG4Win to sign my commits.
+						Now I can rely on WSL even more! <a href="https://t.co/VGUtWDYCIn">pic.twitter.com/VGUtWDYCIn</a></p>&mdash;
+					Tobias Kohlbau (@tobiaskohlbau) <a
+						href="https://twitter.com/tobiaskohlbau/status/1105964171424944128?ref_src=twsrc%5Etfw">March 13, 2019</a>
+				</blockquote>
+				<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+			</section>
+			<section>
+				<blockquote class="twitter-tweet">
+					<p lang="en" dir="ltr">You’re right, definitely worth a blog post. I’m terrible at writing but I will give it
+						a try.</p>&mdash; Tobias Kohlbau (@tobiaskohlbau) <a
+						href="https://twitter.com/tobiaskohlbau/status/1106066905956261888?ref_src=twsrc%5Etfw">March 14, 2019</a>
+				</blockquote>
+				<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+			</section>
+			<section data-markdown>
+				<textarea data-template>
+					## Steps to hapiness
+
+					1. Hacking
+						- Breach firewall 1 to 10
+					2. Sleeping
+					3. Hacking
+						- Breach firewall 10-20
+					4. Sign commits or files
+					5. Be happy
+				</textarea>
+			</section>
+			<section data-markdown>
+				<textarea data-template>
+					## Steps to hapiness
+
+					1. Hacking
+						- Reading docs
+						- Debugging
+					2. Sleeping
+					3. Hacking
+						- Anger, Frustration
+						- Mental meltdown
+					4. Sign commits or files
+					5. Be happy
+				</textarea>
+			</section>
+			<section data-markdown>
+				<textarea data-template>
+					## Solution powered by one (new) Windows feature
+
+					[AF_UNIX comes to windows](https://devblogs.microsoft.com/commandline/af_unix-comes-to-windows/)
+				</textarea>
+			</section>
+			<section data-markdown>
+				<textarea data-template>
+					## Obvious Solution
+					Add AF_UNIX on windows support to gpg via [libassuan](https://www.gnupg.org/software/libassuan/index.html).
+				</textarea>
+			</section>
+			<section data-markdown>
+				<textarea data-template>
+					## My Solution
+					Go program which listens on AF_UNIX and forwards traffic to and from windows gpg-agent.
+				</textarea>
+			</section>
+			<section data-markdown>
+				<textarea data-template>
+					## GPG Basics
+					
+					- GPG uses [Assuan](https://www.gnupg.org/documentation/manuals/assuan.pdf) to communicate between gpg and gpg-agent
+					- Domain sockets on unix
+						- `$HOME/.gnupg/S.gpg-agent`
+					- File and Port(TCP) on GPG4Win
+						- `%APPDATA%\Roaming\gnupg\S.gpg-agent` 
+				</textarea>
+			</section>
+			<section data-markdown>
+				<textarea data-template>
+					## S.gpg-agent on windows
+
+					[Socket wrapper](https://www.gnupg.org/documentation/manuals/assuan/Socket-wrappers.html)
+					> int assuan_sock_bind ( assuan_fd_t sockfd, struct sockaddr *addr, int addrlen)\
+					> Wrapper around bind. Under Windows this creates a file and writes the port number and a random nonce to this file.
+				</textarea>
+			</section>
+			<section data-markdown>
+				<textarea data-template>
+					## S.gpg-agent on windows
+
+					```
+					51526
+					¤„
+					eÌn’¯µÐÅi,BÁ—
+					```
+				</textarea>
+			</section>
+			<section data-markdown>
+				<textarea data-template>
+					## Code 1/3
+
+					```Go
+					var port int
+
+					file, err := os.Open(path)
+					if err != nil { log.Fatal(err) }
+
+					reader := bufio.NewReader(file)
+					tmp, _, err := reader.ReadLine()
+					port, err = strconv.Atoi(string(tmp))
+					if err != nil { log.Fatalf(err) }
+					```
+				</textarea>
+			</section>
+			<section data-markdown>
+				<textarea data-template>
+					## Code 2/3
+
+					```Go
+					var nonce [16]byte
+
+					n, err := reader.Read(nonce[:])
+					if err != nil { log.Fatalf(err) }
+					if n != 16 { log.Fatal("incorrent length of nonce")}
+					```
+				</textarea>
+			</section>
+			<section data-markdown>
+				<textarea data-template>
+					# Code 3/3
+					
+					```Go
+					gpgConn, err := net.Dial("tcp", fmt.Sprintf("localhost:%d", port))
+					if err != nil { log.Fatalf(err) }
+
+					_, err = gpgConn.Write(nonce[:])
+					if err != nil { log.Fatalf(err) }
+
+					go func() {
+						_, err := io.Copy(gpgConn, conn)
+						if err != nil && err != io.EOF { log.Printf(err) }
+					}()
+
+					_, err = io.Copy(conn, gpgConn)
+					if err != nil && err != io.EOF { log.Printf(err) }
+					```
+				</textarea>
+			</section>
+		</div>
+	</div>
+
+	<script src="js/reveal.js"></script>
+
+	<script>
+		// More info about config & dependencies:
+		// - https://github.com/hakimel/reveal.js#configuration
+		// - https://github.com/hakimel/reveal.js#dependencies
+		Reveal.initialize({
+			hash: true,
+			dependencies: [
+				{ src: 'plugin/markdown/marked.js' },
+				{ src: 'plugin/markdown/markdown.js' },
+				{ src: 'plugin/highlight/highlight.js' },
+				{ src: 'plugin/notes/notes.js', async: true }
+			]
+		});
+	</script>
+</body>
+
+</html>

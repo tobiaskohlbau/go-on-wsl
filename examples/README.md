@@ -6,10 +6,11 @@ netstat -r | wsl.exe -d Ubuntu grep --color -E "Active Routes|$"
 ```
 
 ```
+netstat -r | Select-String Active Routes
+```
+
+```
 netstat -r | findstr.exe /C:"Active Routes"
-```
-```
-netstat -r | Select-String Active-Routes
 ```
 
 ## Linux
@@ -23,7 +24,7 @@ echo -n "Hello WSLConf!" | ./palindrome.exe | cowsay
 
 ## Windows Powershell
 ```
-wsl.exe -d Ubuntu ./palindrome
+wsl.exe -d Ubuntu ./palindrome | wsl.exe -d Ubuntu cowsay
 ```
 
 ```

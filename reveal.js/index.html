@@ -76,10 +76,15 @@
 				</blockquote>
 				<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
 			</section>
+			<section data-markdown="">
+				<textarea data-template>
+					![Genious](https://i.ibb.co/fv4PjrM/3s0tfx.jpg)
+				</textarea>
+			</section>
 			<section data-markdown>
 				<textarea data-template>
 					## Steps to happiness
-					### Movies
+					### (Movies)
 
 					1. Hacking
 						- Breach firewall 1 to 10
@@ -93,14 +98,14 @@
 			<section data-markdown>
 				<textarea data-template>
 					## Steps to happiness
-					### Real world
+					### (Real world)
 
 					1. Hacking
 						- Reading docs
-						- Debugging
+						- Anger, Frustration
 					2. Sleeping
 					3. Hacking
-						- Anger, Frustration
+						- Debugging
 						- Mental meltdown
 					4. Sign commits or files
 					5. Be happy
@@ -122,7 +127,7 @@
 			<section data-markdown>
 				<textarea data-template>
 					## My Solution
-					Go program which listens on AF_UNIX and forwards traffic to and from windows gpg-agent.
+					Go program which listens on UNIX-Socket and forwards traffic to and from windows gpg-agent.
 				</textarea>
 			</section>
 			<section data-markdown>
@@ -141,7 +146,6 @@
 					## S.gpg-agent on windows
 
 					[Socket wrapper](https://www.gnupg.org/documentation/manuals/assuan/Socket-wrappers.html)
-					> int assuan_sock_bind ( assuan_fd_t sockfd, struct sockaddr *addr, int addrlen)\
 					> Wrapper around bind. Under Windows this creates a file and writes the port number and a random nonce to this file.
 				</textarea>
 			</section>
@@ -154,6 +158,8 @@
 					¤„
 					eÌn’¯µÐÅi,BÁ—
 					```
+
+					GPG listens on localhost:51526
 				</textarea>
 			</section>
 			<section data-markdown>
@@ -182,7 +188,7 @@
 
 					n, err := reader.Read(nonce[:])
 					if err != nil { log.Fatalf(err) }
-					if n != 16 { log.Fatal("incorrent length of nonce")}
+					if n != 16 { log.Fatal("incorrect length of nonce")}
 					```
 				</textarea>
 			</section>
@@ -247,7 +253,7 @@
 
 					![Microsoft <3 Linux](https://i.ibb.co/JjJJ62r/microsoft-loves-linux-by-jogibaer-d9lrvp1.jpg)
 
-					- Leverage Windows<>Linux interoperability.
+					Leverage Windows<>Linux interoperability
 				</textarea>
 			</section>
 			<section data-markdown>
